@@ -198,29 +198,32 @@ int main()
 	Vertex pyramidVertices[18];
 
 	// base
-	pyramidVertices[0] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[1] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		0.6f, 0.5f };
-	pyramidVertices[2] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.25f, 0.5f };
-	pyramidVertices[3] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[4] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.25f, 0.5f };
-	pyramidVertices[5] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.25f, 0.15f };
+	pyramidVertices[0] = { 1.0f, 0.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+	pyramidVertices[1] = { -1.0f, 0.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
+	pyramidVertices[2] = { 1.0f, 0.0f, 1.0f,       255, 255, 255,     0.5f, 0.5f }; // top left
+	pyramidVertices[3] = { -1.0f, 0.0f, -1.0f,     255, 255, 255,     1.0f, 1.0f }; // bottom right
+	pyramidVertices[4] = { 1.0f, 0.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+	pyramidVertices[5] = { -1.0f, 0.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
 
-	// sides
-	pyramidVertices[6] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[7] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.425f, 0.325f };
-	pyramidVertices[8] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.25f, 0.15f };
+	// back 
+	pyramidVertices[6] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f }; 
+	pyramidVertices[7] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		1.0f, 0.0f }; 
+	pyramidVertices[8] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f }; 
 
-	pyramidVertices[9] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[10] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.425f, 0.325f };
-	pyramidVertices[11] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.25f, 0.15f };
+	// right 
+	pyramidVertices[9] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		0.0f, 0.0f };
+	pyramidVertices[10] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		1.0f, 0.0f };
+	pyramidVertices[11] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
 
-	pyramidVertices[12] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[13] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.425f, 0.325f };
-	pyramidVertices[14] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		0.25f, 0.15f };
+	// front
+	pyramidVertices[12] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.0f, 0.0f };
+	pyramidVertices[13] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
+	pyramidVertices[14] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
 
-	pyramidVertices[15] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.6f, 0.15f };
-	pyramidVertices[16] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.425f, 0.325f };
-	pyramidVertices[17] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.25f, 0.15f };
+	// left
+	pyramidVertices[15] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f };
+	pyramidVertices[16] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
+	pyramidVertices[17] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
 
 	Vertex hexVertices[52];
 
