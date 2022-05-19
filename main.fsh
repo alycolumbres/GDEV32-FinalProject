@@ -1,5 +1,7 @@
 #version 330
 
+// FRAGMENT SHADER
+
 // UV-coordinate of the fragment (interpolated by the rasterization stage)
 in vec2 outUV;
 

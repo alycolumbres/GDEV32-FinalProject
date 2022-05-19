@@ -1,5 +1,7 @@
 #version 330
 
+// VERTEX SHADER
+
 // Vertex position
 layout(location = 0) in vec3 vertexPosition;
 

@@ -130,57 +130,70 @@ int main()
 		return 1;
 	}
 
-	// --- Vertex specification ---
+	// --- VERTEX SPECIFICATION ---
+    
+    Vertex floorVertices[6];
+    
+    // Bottom face of cube
+    floorVertices[0] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+    floorVertices[1] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
+    floorVertices[2] = { 1.0f, -1.0f, 1.0f,       255, 255, 255,     0.5f, 0.5f }; // top left
+    floorVertices[3] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     1.0f, 1.0f }; // bottom right
+    floorVertices[4] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+    floorVertices[5] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
+    
 
 	Vertex cubeVertices[36];
 
-	// right
-	cubeVertices[0] = { 1.0f, -1.0f, -1.0f,		255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[1] = { 1.0f, 1.0f, -1.0f,		255, 255, 255,		0.0f, 1.0f };
-	cubeVertices[2] = { 1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[3] = { 1.0f, -1.0f, -1.0f,		255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[4] = { 1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[5] = { 1.0f, -1.0f, 1.0f,		255, 255, 255,		0.5f, 0.5f };
+    // NOTE: NEGATIVE Z FACING FORWARD
 
-	// top
-	cubeVertices[6] = { 1.0f, 1.0f, -1.0f,		255, 255, 255,		1.0f, 0.5f };
-	cubeVertices[7] = { -1.0f, 1.0f, -1.0f,		255, 255, 255,		1.0f, 1.0f };
-	cubeVertices[8] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[9] = { 1.0f, 1.0f, -1.0f,		255, 255, 255,		1.0f, 0.5f };
-	cubeVertices[10] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[11] = { 1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 0.5f };
+    // right
+    cubeVertices[0] = { 1.0f, -1.0f, -1.0f,       255, 255, 255,     0.0f, 0.5f }; // bottom left
+    cubeVertices[1] = { 1.0f, 1.0f, 1.0f,         255, 255, 255,     0.5f, 1.0f }; // top right
+    cubeVertices[2] = { 1.0f, 1.0f, -1.0f,        255, 255, 255,     0.0f, 1.0f }; // top left
+    cubeVertices[3] = { 1.0f, -1.0f, 1.0f,        255, 255, 255,     0.5f, 0.5f }; // bottom right
+    cubeVertices[4] = { 1.0f, 1.0f, 1.0f,         255, 255, 255,     0.5f, 1.0f }; // top right
+    cubeVertices[5] = { 1.0f, -1.0f, -1.0f,       255, 255, 255,     0.0f, 0.5f }; // bottom left
 
-	// left
-	cubeVertices[12] = { -1.0f, -1.0f, -1.0f,	255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[13] = { -1.0f, 1.0f, -1.0f,	255, 255, 255,		0.0f, 1.0f };
-	cubeVertices[14] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[15] = { -1.0f, -1.0f, -1.0f,	255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[16] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[17] = { -1.0f, -1.0f, 1.0f,	255, 255, 255,		0.5f, 0.5f };
+    // top
+    cubeVertices[6] = { -1.0f, 1.0f, -1.0f,       255, 255, 255,     1.0f, 1.0f }; // bottom left
+    cubeVertices[7] = { 1.0f, 1.0f, 1.0f,         255, 255, 255,     0.5f, 0.5f }; // top right
+    cubeVertices[8] = { -1.0f, 1.0f, 1.0f,        255, 255, 255,     0.5f, 1.0f }; // top left
+    cubeVertices[9] = { 1.0f, 1.0f, -1.0f,        255, 255, 255,     1.0f, 0.5f }; // bottom right
+    cubeVertices[10] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     1.0f, 1.0f }; // bottom left
+    cubeVertices[11] = { 1.0f, 1.0f, 1.0f,        255, 255, 255,     0.5f, 0.5f }; // top right
 
-	// bottom
-	cubeVertices[18] = { -1.0f, -1.0f, -1.0f,	255, 255, 255,		1.0f, 0.5f };
-	cubeVertices[19] = { 1.0f, -1.0f, -1.0f,	255, 255, 255,		1.0f, 1.0f };
-	cubeVertices[20] = { 1.0f, -1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[21] = { -1.0f, -1.0f, -1.0f,	255, 255, 255,		1.0f, 0.5f };
-	cubeVertices[22] = { 1.0f, -1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[23] = { -1.0f, -1.0f, 1.0f,	255, 255, 255,		0.5f, 0.5f };
+    // left
+    cubeVertices[12] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 0.5f }; // bottom left
+    cubeVertices[13] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     0.0f, 1.0f }; // top right
+    cubeVertices[14] = { -1.0f, 1.0f, 1.0f,       255, 255, 255,     0.5f, 1.0f }; // top left
+    cubeVertices[15] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.0f, 0.5f }; // bottom right
+    cubeVertices[16] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     0.0f, 1.0f }; // top right
+    cubeVertices[17] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 0.5f }; // bottom left
 
-	// front
-	cubeVertices[24] = { 1.0f, -1.0f, 1.0f,		255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[25] = { 1.0f, 1.0f, 1.0f,		255, 255, 255,		0.0f, 1.0f };
-	cubeVertices[26] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[27] = { 1.0f, -1.0f, 1.0f,		255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[28] = { -1.0f, 1.0f, 1.0f,		255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[29] = { -1.0f, -1.0f, 1.0f,	255, 255, 255,		0.5f, 0.5f };
+    // bottom
+    cubeVertices[18] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+    cubeVertices[19] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
+    cubeVertices[20] = { 1.0f, -1.0f, 1.0f,       255, 255, 255,     0.5f, 0.5f }; // top left
+    cubeVertices[21] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     1.0f, 1.0f }; // bottom right
+    cubeVertices[22] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
+    cubeVertices[23] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
 
-	// back
-	cubeVertices[30] = { 1.0f, -1.0f, -1.0f,	255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[31] = { 1.0f, 1.0f, -1.0f,		255, 255, 255,		0.0f, 1.0f };
-	cubeVertices[32] = { -1.0f, 1.0f, -1.0f,	255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[33] = { 1.0f, -1.0f, -1.0f,	255, 255, 255,		0.0f, 0.5f };
-	cubeVertices[34] = { -1.0f, 1.0f, -1.0f,	255, 255, 255,		0.5f, 1.0f };
-	cubeVertices[35] = { -1.0f, -1.0f, -1.0f,	255, 255, 255,		0.5f, 0.5f };
+    // back
+    cubeVertices[24] = { 1.0f, -1.0f, 1.0f,       255, 255, 255,     0.0f, 0.5f }; // bottom left
+    cubeVertices[25] = { -1.0f, 1.0f, 1.0f,       255, 255, 255,     0.5f, 1.0f }; // top right
+    cubeVertices[26] = { 1.0f, 1.0f, 1.0f,        255, 255, 255,     0.0f, 1.0f }; // top left
+    cubeVertices[27] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 0.5f }; // bottom right
+    cubeVertices[28] = { -1.0f, 1.0f, 1.0f,       255, 255, 255,     0.5f, 1.0f }; // top right
+    cubeVertices[29] = { 1.0f, -1.0f, 1.0f,       255, 255, 255,     0.0f, 0.5f }; // bottom left
+    
+    // front
+    cubeVertices[30] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left
+    cubeVertices[31] = { 1.0f, 1.0f, -1.0f,       255, 255, 255,     0.0f, 1.0f }; // top right
+    cubeVertices[32] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     0.5f, 1.0f }; // top left
+    cubeVertices[33] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     0.0f, 0.5f }; // bottom right
+    cubeVertices[34] = { 1.0f, 1.0f, -1.0f,       255, 255, 255,     0.0f, 1.0f }; // top right
+    cubeVertices[35] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left
 
 	Vertex pyramidVertices[18];
 
@@ -279,7 +292,42 @@ int main()
 	hexVertices[50] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
 	hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
 
-	/*
+    
+    
+    // --- SETTING UP OF VBOs, VAOs ---
+    
+    // FLOOR VBO, VAO
+
+    // Create a vertex buffer object (VBO), and upload our vertices data to the VBO
+    GLuint vboFloor;
+    glGenBuffers(1, &vboFloor);
+    glBindBuffer(GL_ARRAY_BUFFER, vboFloor);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(floorVertices), floorVertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Create a vertex array object that contains data on how to map vertex attributes
+    // (e.g., position, color) to vertex shader properties.
+    GLuint vaoFloor;
+    glGenVertexArrays(1, &vaoFloor);
+    glBindVertexArray(vaoFloor);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboFloor);
+
+    // Vertex attribute 0 - Position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+
+    // Vertex attribute 1 - Color
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)(offsetof(Vertex, r)));
+
+    // Vertex attribute 2 - UV coordinate
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, u)));
+
+    glBindVertexArray(0);
+    
+    /*
 	* Cube VBO and VAO
 	*/
 
@@ -377,6 +425,7 @@ int main()
 	glBindVertexArray(0);
 
 
+    
 	// Create a shader program
 	GLuint program = CreateShaderProgram("main.vsh", "main.fsh");
 
@@ -573,7 +622,7 @@ int main()
 
 		GLint matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Static Pyramid
 
@@ -587,7 +636,7 @@ int main()
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+		//glDrawArrays(GL_TRIANGLES, 0, 18);
 
 		// Static Pyramid 2
 
@@ -599,7 +648,7 @@ int main()
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+		//glDrawArrays(GL_TRIANGLES, 0, 18);
 
 		// Moving Pyramid
 
@@ -611,7 +660,7 @@ int main()
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+		//glDrawArrays(GL_TRIANGLES, 0, 18);
 		
 
 		// Moving Hexagonal Prism
@@ -628,9 +677,9 @@ int main()
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+		/*glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 		glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
-		glDrawArrays(GL_TRIANGLES, 16, 36);	
+		glDrawArrays(GL_TRIANGLES, 16, 36);	*/
 
 		// Static Hexagonal Prism
 
@@ -643,9 +692,9 @@ int main()
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+		/*glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 		glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
-		glDrawArrays(GL_TRIANGLES, 16, 36);
+		glDrawArrays(GL_TRIANGLES, 16, 36);*/
 
 		// "Unuse" the vertex array object
 		glBindVertexArray(0);
