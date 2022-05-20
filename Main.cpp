@@ -581,6 +581,9 @@ int main()
 	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
 	stbi_set_flip_vertically_on_load(true);
 
+	// Read the image data and store it in an unsigned char array
+	imageData = stbi_load("texture3.jpg", &imageWidth, &imageHeight, &numChannels, 0);
+
 
 	// Make sure that we actually loaded the image before uploading the data to the GPU
 	if (imageData != nullptr)
