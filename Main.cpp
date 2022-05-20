@@ -227,7 +227,7 @@ int main()
 
 	Vertex hexVertices[52];
 
-	// back hexagon
+	// front hexagon
 	hexVertices[0] = { 0.0f, 0.0f, 0.0f,	255, 255, 255,		0.5f, 0.5f };
 	hexVertices[1] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.75f, 1.0f };
 	hexVertices[2] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.5f };
@@ -553,9 +553,6 @@ int main()
 	stbi_set_flip_vertically_on_load(true);
 
 
-	// Read the image data and store it in an unsigned char array
-	imageData = stbi_load("texture3.jpg", &imageWidth, &imageHeight, &numChannels, 0);
-
 	// Make sure that we actually loaded the image before uploading the data to the GPU
 	if (imageData != nullptr)
 	{
@@ -586,6 +583,56 @@ int main()
 		std::cerr << "Failed to load image" << std::endl;
 	}
 
+	// Create a variable that will contain the ID for our texture,
+	// and use glGenTextures() to generate the texture itself
+	GLuint floorTex;
+	glGenTextures(1, &floorTex);
+
+	// --- Load our image using stb_image ---
+
+	// Im image-space (pixels), (0, 0) is the upper-left corner of the image
+	// However, in u-v coordinates, (0, 0) is the lower-left corner of the image
+	// This means that the image will appear upside-down when we use the image data as is
+	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
+	stbi_set_flip_vertically_on_load(true);
+
+	// 'imageWidth' and imageHeight will contain the width and height of the loaded image respectively
+	//int imageWidth, imageHeight, numChannels;
+
+	// Read the image data and store it in an unsigned char array
+	imageData = stbi_load("sand texture.jpeg", &imageWidth, &imageHeight, &numChannels, 0);
+
+	// Make sure that we actually loaded the image before uploading the data to the GPU
+	if (imageData != nullptr)
+	{
+		// Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
+		glBindTexture(GL_TEXTURE_2D, floorTex);
+
+		// Set the filtering methods for magnification and minification
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		// Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		// Upload the image data to GPU memory
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+		// If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
+		//glGenerateMipmap(GL_TEXTURE_2D);
+
+		// Once we have copied the data over to the GPU, we can delete
+		// the data on the CPU side, since we won't be using it anymore
+		stbi_image_free(imageData);
+		imageData = nullptr;
+	}
+	else
+	{
+		std::cerr << "Failed to load image" << std::endl;
+	}
+
+
 	glEnable(GL_DEPTH_TEST);
 
 	// Render loop
@@ -605,27 +652,27 @@ int main()
 		// Cube Room
 
 		// Use the vertex array object that we created
-		glBindVertexArray(vaoCube);
+		glBindVertexArray(vaoFloor);
 
 		// Bind our texture to texture unit 0
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex);
+		glBindTexture(GL_TEXTURE_2D, floorTex);
 
 		// Make our sampler in the fragment shader use texture unit 0
 		GLint texUniformLocation = glGetUniformLocation(program, "tex");
 		glUniform1i(texUniformLocation, 0);
 
-		glm::mat4 roomModelMatrix = glm::mat4(1.0f);
-		roomModelMatrix = glm::translate(roomModelMatrix, glm::vec3(1.0f, 0.0f, 0.0f));
-		roomModelMatrix = glm::scale(roomModelMatrix, glm::vec3(10.0f, 10.0f, 10.0f));
-		roomModelMatrix = glm::rotate(roomModelMatrix, glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::mat4 floorModelMatrix = glm::mat4(1.0f);
+		floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(1.0f, 0.0f, 0.0f));
+		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(10.0f, 10.0f, 10.0f));
+		floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), windowWidth / windowHeight, 0.1f, 100.0f);
-		glm::mat4 finalMatrix = projectionMatrix * viewMatrix * roomModelMatrix;
+		glm::mat4 finalMatrix = projectionMatrix * viewMatrix * floorModelMatrix;
 
 		GLint matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Static Pyramid
 
@@ -688,13 +735,13 @@ int main()
 
 		glm::mat4 hex2ModelMatrix = glm::mat4(1.0f);
 		hex2ModelMatrix = glm::translate(hex2ModelMatrix, glm::vec3(0.0f, -6.0f, -5.0f));
-		hex2ModelMatrix = glm::scale(hex2ModelMatrix, glm::vec3(2.0f, 2.0f, 2.0f));
-		hex2ModelMatrix = glm::rotate(hex2ModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//hex2ModelMatrix = glm::scale(hex2ModelMatrix, glm::vec3(2.0f, 2.0f, 2.0f));
+		//hex2ModelMatrix = glm::rotate(hex2ModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		finalMatrix = projectionMatrix * viewMatrix * hex2ModelMatrix;
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-
+		
 		/*glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 		glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
 		glDrawArrays(GL_TRIANGLES, 16, 36);*/
