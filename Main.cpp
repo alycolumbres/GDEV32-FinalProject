@@ -62,6 +62,7 @@ struct Vertex
 	GLfloat x, y, z;	// Position
 	GLubyte r, g, b;	// Color
 	GLfloat u, v;		// UV coordinates
+    GLfloat nx, ny, nz; // Normal vector coordinates
 };
 
 glm::vec3 cameraPosition = glm::vec3(0.0f, 5.0f, 7.0f);
@@ -106,7 +107,7 @@ int main()
 	// Tell GLFW to create a window
 	float windowWidth = 1024;
 	float windowHeight = 576;
-	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Programming Exercise 1", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Final Project", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		std::cerr << "Failed to create GLFW window!" << std::endl;
@@ -141,6 +142,33 @@ int main()
     floorVertices[3] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     1.0f, 1.0f }; // bottom right
     floorVertices[4] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
     floorVertices[5] = { -1.0f, -1.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
+    
+    // Loop to calculate normal vertices per face
+    for( int i=0; i < (sizeof(floorVertices)/sizeof(floorVertices[0])); i+=6 )
+    {
+        glm::vec3 v1( floorVertices[i].x, floorVertices[i].y, floorVertices[i].z );
+        glm::vec3 v2( floorVertices[i+1].x, floorVertices[i+1].y, floorVertices[i+1].z );
+        glm::vec3 v3( floorVertices[i+2].x, floorVertices[i+2].y, floorVertices[i+2].z );
+        
+        glm::vec3 a;
+        a.x = v2.x - v1.x;
+        a.y = v2.y - v1.y;
+        a.z = v2.z - v1.z;
+        
+        glm::vec3 b;
+        b.x = v3.x - v1.x;
+        b.y = v3.y - v1.y;
+        b.z = v3.z - v1.z;
+        
+        glm::vec3 crossProd( glm::cross(b, a) );
+        
+        for( int j=i; j < (i+6); j+=1 )
+        {
+            floorVertices[j].nx = crossProd.x;
+            floorVertices[j].ny = crossProd.y;
+            floorVertices[j].nz = crossProd.z;
+        }
+    }
     
 
 	Vertex cubeVertices[36];
@@ -330,9 +358,8 @@ int main()
 
     glBindVertexArray(0);
     
-    /*
-	* Cube VBO and VAO
-	*/
+
+	// CUBE VBO, VAO
 
 	// Create a vertex buffer object (VBO), and upload our vertices data to the VBO
 	GLuint vboCube;
@@ -363,9 +390,8 @@ int main()
 
 	glBindVertexArray(0);
 
-	/*
-	* Pyramid VBO and VAO
-	*/
+
+	// PYRAMID VBO, VAO
 
 	GLuint vboPyramid;
 	glGenBuffers(1, &vboPyramid);
@@ -395,9 +421,8 @@ int main()
 
 	glBindVertexArray(0);
 
-	/*
-	* Hexagonal Prism VBO and VAO
-	*/
+
+	// HEXAGONAL PRISM VBO, VAO
 
 	GLuint vboHex;
 	glGenBuffers(1, &vboHex);
@@ -442,6 +467,10 @@ int main()
     int framebufferWidth, framebufferHeight;
     glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
     glViewport(0, 0, framebufferWidth, framebufferHeight);
+    
+    
+    
+    // --- TEXTURES ---
 
 	// Create a variable that will contain the ID for our texture,
 	// and use glGenTextures() to generate the texture itself
@@ -643,13 +672,64 @@ int main()
 		deltaTime = time - lastFrame;
 		lastFrame = time;
 
-		// Clear the color and depth buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		// Use the shader program that we created
 		glUseProgram(program);
+        
+        
+        
+        // --- LIGHTING ---
+        
+        // Eye position
+        glm::vec3 eyePosition = cameraPosition;
+        GLint eyePositionUniformLocation = glGetUniformLocation(program, "eyePosition");
+        glUniform3fv(eyePositionUniformLocation, 1, glm::value_ptr(eyePosition));
+        
+        
+        // Ambient intensity FOR DIRECTIONAL LIGHT
+        float ambientDirectionalIntensity = 0.8f;
+        GLint ambientDirectionalIntensityUniformLocation = glGetUniformLocation(program, "ambientDirectionalIntensity");
+        glUniform1f(ambientDirectionalIntensityUniformLocation, ambientDirectionalIntensity);
+        
+        // Ambient component FOR DIRECTIONAL LIGHT
+        glm::vec3 ambientDirectionalComponent = glm::vec3(1.0f, 0.9f, 0.8f);
+        GLint ambientDirectionalComponentUniformLocation = glGetUniformLocation(program, "ambientDirectionalComponent");
+        glUniform3fv(ambientDirectionalComponentUniformLocation, 1, glm::value_ptr(ambientDirectionalComponent));
+        
+        
+        // Diffuse intensity
+        float diffuseIntensity = 0.8f;
+        GLint diffuseIntensityUniformLocation = glGetUniformLocation(program, "diffuseIntensity");
+        glUniform1f(diffuseIntensityUniformLocation, diffuseIntensity);
+        
+        // Diffuse component
+        glm::vec3 diffuseComponent = glm::vec3(0.8f, 0.8f, 0.8f);
+        GLint diffuseComponentUniformLocation = glGetUniformLocation(program, "diffuseComponent");
+        glUniform3fv(diffuseComponentUniformLocation, 1, glm::value_ptr(diffuseComponent));
+        
+        
+        // Specular intensity
+        float specularIntensity = 5.0f;
+        GLint specularIntensityUniformLocation = glGetUniformLocation(program, "specularIntensity");
+        glUniform1f(specularIntensityUniformLocation, specularIntensity);
+        
+        // Specular component
+        glm::vec3 specularComponent = glm::vec3(0.4f, 0.4f, 0.4f);
+        GLint specularComponentUniformLocation = glGetUniformLocation(program, "specularComponent");
+        glUniform3fv(specularComponentUniformLocation, 1, glm::value_ptr(specularComponent));
+        
+        
+        // Shininess
+        float shininess = 64.0f;
+        GLint shininessUniformLocation = glGetUniformLocation(program, "shininess");
+        glUniform1f(shininessUniformLocation, shininess);
+        
+        
+        // Clear the color and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        
 
-		// Cube Room
+		// FLOOR
 
 		// Use the vertex array object that we created
 		glBindVertexArray(vaoFloor);
@@ -663,15 +743,20 @@ int main()
 		glUniform1i(texUniformLocation, 0);
 
 		glm::mat4 floorModelMatrix = glm::mat4(1.0f);
-		floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(1.0f, 0.0f, 0.0f));
-		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(10.0f, 10.0f, 10.0f));
-		floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(0.0f, 40.0f, -50.0f));
+		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(50.0f, 50.0f, 50.0f));
+		floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        
 		glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), windowWidth / windowHeight, 0.1f, 100.0f);
 		glm::mat4 finalMatrix = projectionMatrix * viewMatrix * floorModelMatrix;
 
 		GLint matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        
+        GLint modelUniformLocation = glGetUniformLocation(program, "model");
+        glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, glm::value_ptr(floorModelMatrix));
+        
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// Static Pyramid
@@ -779,7 +864,7 @@ int main()
 
 void keyboardInput(GLFWwindow* window)
 {
-	float speed = 5.0 * deltaTime;
+	float speed = 20.0 * deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
