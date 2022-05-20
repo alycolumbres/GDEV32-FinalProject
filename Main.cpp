@@ -65,7 +65,7 @@ struct Vertex
     GLfloat nx, ny, nz; // Normal vector coordinates
 };
 
-glm::vec3 cameraPosition = glm::vec3(0.0f, 5.0f, 7.0f);
+glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -171,7 +171,7 @@ int main()
     }
     
 
-	Vertex cubeVertices[36];
+    /*Vertex cubeVertices[36];
 
     // NOTE: NEGATIVE Z FACING FORWARD
 
@@ -221,8 +221,9 @@ int main()
     cubeVertices[32] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     0.5f, 1.0f }; // top left
     cubeVertices[33] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     0.0f, 0.5f }; // bottom right
     cubeVertices[34] = { 1.0f, 1.0f, -1.0f,       255, 255, 255,     0.0f, 1.0f }; // top right
-    cubeVertices[35] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left
+    cubeVertices[35] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left*/
 
+    
 	Vertex pyramidVertices[18];
 
 	// base
@@ -253,7 +254,8 @@ int main()
 	pyramidVertices[16] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
 	pyramidVertices[17] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
 
-	Vertex hexVertices[52];
+    
+	/*Vertex hexVertices[52];
 
 	// front hexagon
 	hexVertices[0] = { 0.0f, 0.0f, 0.0f,	255, 255, 255,		0.5f, 0.5f };
@@ -321,7 +323,7 @@ int main()
 	hexVertices[48] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
 	hexVertices[49] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
 	hexVertices[50] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+	hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };*/
 
     
     
@@ -359,7 +361,7 @@ int main()
     glBindVertexArray(0);
     
 
-	// CUBE VBO, VAO
+	/*// CUBE VBO, VAO
 
 	// Create a vertex buffer object (VBO), and upload our vertices data to the VBO
 	GLuint vboCube;
@@ -388,7 +390,7 @@ int main()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, u)));
 
-	glBindVertexArray(0);
+	glBindVertexArray(0);*/
 
 
 	// PYRAMID VBO, VAO
@@ -422,7 +424,7 @@ int main()
 	glBindVertexArray(0);
 
 
-	// HEXAGONAL PRISM VBO, VAO
+	/*// HEXAGONAL PRISM VBO, VAO
 
 	GLuint vboHex;
 	glGenBuffers(1, &vboHex);
@@ -450,7 +452,7 @@ int main()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, u)));
 
-	glBindVertexArray(0);
+	glBindVertexArray(0);*/
 
 
     
@@ -471,11 +473,61 @@ int main()
     
     
     // --- TEXTURES ---
+    
+    // Create a variable that will contain the ID for our texture,
+    // and use glGenTextures() to generate the texture itself
+    GLuint floorTex;
+    glGenTextures(1, &floorTex);
+
+    // --- Load our image using stb_image ---
+
+    // Im image-space (pixels), (0, 0) is the upper-left corner of the image
+    // However, in u-v coordinates, (0, 0) is the lower-left corner of the image
+    // This means that the image will appear upside-down when we use the image data as is
+    // This function tells stbi to flip the image vertically so that it is not upside-down when we use it
+    stbi_set_flip_vertically_on_load(true);
+    
+    // 'imageWidth' and imageHeight will contain the width and height of the loaded image respectively
+    int imageWidth, imageHeight, numChannels;
+
+    // Read the image data and store it in an unsigned char array
+    unsigned char* imageData = stbi_load("sand texture.jpeg", &imageWidth, &imageHeight, &numChannels, 0);
+
+    // Make sure that we actually loaded the image before uploading the data to the GPU
+    if (imageData != nullptr)
+    {
+        // Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
+        glBindTexture(GL_TEXTURE_2D, floorTex);
+
+        // Set the filtering methods for magnification and minification
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        // Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        // Upload the image data to GPU memory
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+        // If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
+        //glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Once we have copied the data over to the GPU, we can delete
+        // the data on the CPU side, since we won't be using it anymore
+        stbi_image_free(imageData);
+        imageData = nullptr;
+    }
+    else
+    {
+        std::cerr << "Failed to load image" << std::endl;
+    }
+    
 
 	// Create a variable that will contain the ID for our texture,
 	// and use glGenTextures() to generate the texture itself
-	GLuint tex;
-	glGenTextures(1, &tex);
+	GLuint pyramidTex;
+	glGenTextures(1, &pyramidTex);
 
 	// --- Load our image using stb_image ---
 
@@ -485,17 +537,14 @@ int main()
 	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
 	stbi_set_flip_vertically_on_load(true);
 
-	// 'imageWidth' and imageHeight will contain the width and height of the loaded image respectively
-	int imageWidth, imageHeight, numChannels;
-
 	// Read the image data and store it in an unsigned char array
-	unsigned char* imageData = stbi_load("texture.png", &imageWidth, &imageHeight, &numChannels, 0);
+	imageData = stbi_load("pyramid texture.jpeg", &imageWidth, &imageHeight, &numChannels, 0);
 
 	// Make sure that we actually loaded the image before uploading the data to the GPU
 	if (imageData != nullptr)
 	{
 		// Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
-		glBindTexture(GL_TEXTURE_2D, tex);
+		glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
 		// Set the filtering methods for magnification and minification
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -521,148 +570,6 @@ int main()
 		std::cerr << "Failed to load image" << std::endl;
 	}
 
-	// Create a variable that will contain the ID for our texture,
-	// and use glGenTextures() to generate the texture itself
-	GLuint tex2;
-	glGenTextures(1, &tex2);
-
-	// --- Load our image using stb_image ---
-
-	// Im image-space (pixels), (0, 0) is the upper-left corner of the image
-	// However, in u-v coordinates, (0, 0) is the lower-left corner of the image
-	// This means that the image will appear upside-down when we use the image data as is
-	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
-	stbi_set_flip_vertically_on_load(true);
-
-
-	// Read the image data and store it in an unsigned char array
-	imageData = stbi_load("texture2.jpg", &imageWidth, &imageHeight, &numChannels, 0);
-
-	// Make sure that we actually loaded the image before uploading the data to the GPU
-	if (imageData != nullptr)
-	{
-		// Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
-		glBindTexture(GL_TEXTURE_2D, tex2);
-
-		// Set the filtering methods for magnification and minification
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		// Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// Upload the image data to GPU memory
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-
-		// If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
-		//glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Once we have copied the data over to the GPU, we can delete
-		// the data on the CPU side, since we won't be using it anymore
-		stbi_image_free(imageData);
-		imageData = nullptr;
-	}
-	else
-	{
-		std::cerr << "Failed to load image" << std::endl;
-	}
-
-	// Create a variable that will contain the ID for our texture,
-	// and use glGenTextures() to generate the texture itself
-	GLuint tex3;
-	glGenTextures(1, &tex3);
-
-	// --- Load our image using stb_image ---
-
-	// Im image-space (pixels), (0, 0) is the upper-left corner of the image
-	// However, in u-v coordinates, (0, 0) is the lower-left corner of the image
-	// This means that the image will appear upside-down when we use the image data as is
-	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
-	stbi_set_flip_vertically_on_load(true);
-
-	// Read the image data and store it in an unsigned char array
-	imageData = stbi_load("texture3.jpg", &imageWidth, &imageHeight, &numChannels, 0);
-
-
-	// Make sure that we actually loaded the image before uploading the data to the GPU
-	if (imageData != nullptr)
-	{
-		// Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
-		glBindTexture(GL_TEXTURE_2D, tex3);
-
-		// Set the filtering methods for magnification and minification
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		// Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// Upload the image data to GPU memory
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-
-		// If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
-		//glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Once we have copied the data over to the GPU, we can delete
-		// the data on the CPU side, since we won't be using it anymore
-		stbi_image_free(imageData);
-		imageData = nullptr;
-	}
-	else
-	{
-		std::cerr << "Failed to load image" << std::endl;
-	}
-
-	// Create a variable that will contain the ID for our texture,
-	// and use glGenTextures() to generate the texture itself
-	GLuint floorTex;
-	glGenTextures(1, &floorTex);
-
-	// --- Load our image using stb_image ---
-
-	// Im image-space (pixels), (0, 0) is the upper-left corner of the image
-	// However, in u-v coordinates, (0, 0) is the lower-left corner of the image
-	// This means that the image will appear upside-down when we use the image data as is
-	// This function tells stbi to flip the image vertically so that it is not upside-down when we use it
-	stbi_set_flip_vertically_on_load(true);
-
-	// 'imageWidth' and imageHeight will contain the width and height of the loaded image respectively
-	//int imageWidth, imageHeight, numChannels;
-
-	// Read the image data and store it in an unsigned char array
-	imageData = stbi_load("sand texture.jpeg", &imageWidth, &imageHeight, &numChannels, 0);
-
-	// Make sure that we actually loaded the image before uploading the data to the GPU
-	if (imageData != nullptr)
-	{
-		// Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
-		glBindTexture(GL_TEXTURE_2D, floorTex);
-
-		// Set the filtering methods for magnification and minification
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		// Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		// Upload the image data to GPU memory
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-
-		// If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
-		//glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Once we have copied the data over to the GPU, we can delete
-		// the data on the CPU side, since we won't be using it anymore
-		stbi_image_free(imageData);
-		imageData = nullptr;
-	}
-	else
-	{
-		std::cerr << "Failed to load image" << std::endl;
-	}
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -747,7 +654,7 @@ int main()
 
 		glm::mat4 floorModelMatrix = glm::mat4(1.0f);
 		floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(0.0f, 40.0f, -50.0f));
-		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(50.0f, 50.0f, 50.0f));
+		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(100.0f, 50.0f, 150.0f));
 		floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         
 		glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
@@ -761,22 +668,25 @@ int main()
         glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, glm::value_ptr(floorModelMatrix));
         
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+        
 
-		// Static Pyramid
+		// LEFT PYRAMID
 
 		glBindVertexArray(vaoPyramid);
-		glBindTexture(GL_TEXTURE_2D, tex3);
+		glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
 		glm::mat4 pyramidModelMatrix = glm::mat4(1.0f);
-		pyramidModelMatrix = glm::translate(pyramidModelMatrix, glm::vec3(-6.0f, -10.0f, 4.0f));
-		pyramidModelMatrix = glm::scale(pyramidModelMatrix, glm::vec3(1.5f, 1.5f, 1.5f));
+		pyramidModelMatrix = glm::translate(pyramidModelMatrix, glm::vec3(0.0f, -10.0f, -80.0f));
+		pyramidModelMatrix = glm::scale(pyramidModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+        
 		finalMatrix = projectionMatrix * viewMatrix * pyramidModelMatrix;
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		//glDrawArrays(GL_TRIANGLES, 0, 18);
+		glDrawArrays(GL_TRIANGLES, 0, 18);
+        
 
-		// Static Pyramid 2
+		/*// MIDDLE PYRAMID
 
 		glm::mat4 pyramid2ModelMatrix = glm::mat4(1.0f);
 		pyramid2ModelMatrix = glm::translate(pyramid2ModelMatrix, glm::vec3(6.0f, -10.0f, 4.0f));
@@ -786,9 +696,9 @@ int main()
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		//glDrawArrays(GL_TRIANGLES, 0, 18);
+		//glDrawArrays(GL_TRIANGLES, 0, 18);*/
 
-		// Moving Pyramid
+		/*// Moving Pyramid
 
 		glm::mat4 pyramid3ModelMatrix = glm::mat4(1.0f);
 		pyramid3ModelMatrix = glm::translate(pyramid3ModelMatrix, glm::vec3(0.0f, -6.0f, -5.0f));
@@ -798,10 +708,10 @@ int main()
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		//glDrawArrays(GL_TRIANGLES, 0, 18);
+		//glDrawArrays(GL_TRIANGLES, 0, 18);*/
 		
 
-		// Moving Hexagonal Prism
+		/*// Moving Hexagonal Prism
 		
 		glBindVertexArray(vaoHex);
 		glBindTexture(GL_TEXTURE_2D, tex2);
@@ -815,9 +725,9 @@ int main()
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 
-		/*glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 		glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
-		glDrawArrays(GL_TRIANGLES, 16, 36);	*/
+		glDrawArrays(GL_TRIANGLES, 16, 36);
 
 		// Static Hexagonal Prism
 
@@ -830,7 +740,7 @@ int main()
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 		
-		/*glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
 		glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
 		glDrawArrays(GL_TRIANGLES, 16, 36);*/
 
@@ -850,14 +760,16 @@ int main()
 	glDeleteProgram(program);
 
 	// Delete the VBO that contains our vertices
-	glDeleteBuffers(1, &vboCube);
+    glDeleteBuffers(1, &vboFloor);
 	glDeleteBuffers(1, &vboPyramid);
-	glDeleteBuffers(1, &vboHex);
+    //glDeleteBuffers(1, &vboCube);
+	//glDeleteBuffers(1, &vboHex);
 
 	// Delete the vertex array object
-	glDeleteVertexArrays(1, &vaoCube);
+    glDeleteVertexArrays(1, &vboFloor);
 	glDeleteVertexArrays(1, &vaoPyramid);
-	glDeleteVertexArrays(1, &vaoHex);
+    //glDeleteVertexArrays(1, &vaoCube);
+	//glDeleteVertexArrays(1, &vaoHex);
 
 	// Remember to tell GLFW to clean itself up before exiting the application
 	glfwTerminate();
