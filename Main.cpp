@@ -234,7 +234,7 @@ int main()
 	pyramidVertices[4] = { 1.0f, 0.0f, -1.0f,      255, 255, 255,     1.0f, 0.5f }; // bottom left
 	pyramidVertices[5] = { -1.0f, 0.0f, 1.0f,      255, 255, 255,     0.5f, 1.0f }; // top right
 
-	// back 
+	// back
 	pyramidVertices[6] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f }; 
 	pyramidVertices[7] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		1.0f, 0.0f }; 
 	pyramidVertices[8] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f }; 
@@ -253,6 +253,33 @@ int main()
 	pyramidVertices[15] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f };
 	pyramidVertices[16] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
 	pyramidVertices[17] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f };
+    
+    // Loop to calculate normal vertices per face
+    for( int i=0; i < (sizeof(pyramidVertices)/sizeof(pyramidVertices[0])); i+=6 )
+    {
+        glm::vec3 v1( pyramidVertices[i].x, pyramidVertices[i].y, pyramidVertices[i].z );
+        glm::vec3 v2( pyramidVertices[i+1].x, pyramidVertices[i+1].y, pyramidVertices[i+1].z );
+        glm::vec3 v3( pyramidVertices[i+2].x, pyramidVertices[i+2].y, pyramidVertices[i+2].z );
+        
+        glm::vec3 a;
+        a.x = v2.x - v1.x;
+        a.y = v2.y - v1.y;
+        a.z = v2.z - v1.z;
+        
+        glm::vec3 b;
+        b.x = v3.x - v1.x;
+        b.y = v3.y - v1.y;
+        b.z = v3.z - v1.z;
+        
+        glm::vec3 crossProd( glm::cross(b, a) );
+        
+        for( int j=i; j < (i+6); j+=1 )
+        {
+            pyramidVertices[j].nx = crossProd.x;
+            pyramidVertices[j].ny = crossProd.y;
+            pyramidVertices[j].nz = crossProd.z;
+        }
+    }
 
     
 	/*Vertex hexVertices[52];
@@ -670,33 +697,52 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 6);
         
 
-		// LEFT PYRAMID
+		// MIDDLE PYRAMID
 
 		glBindVertexArray(vaoPyramid);
 		glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
-		glm::mat4 pyramidModelMatrix = glm::mat4(1.0f);
-		pyramidModelMatrix = glm::translate(pyramidModelMatrix, glm::vec3(0.0f, -10.0f, -80.0f));
-		pyramidModelMatrix = glm::scale(pyramidModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+		glm::mat4 pyramidMiddleModelMatrix = glm::mat4(1.0f);
+        pyramidMiddleModelMatrix = glm::translate(pyramidMiddleModelMatrix, glm::vec3(0.0f, -10.0f, -80.0f));
+        pyramidMiddleModelMatrix = glm::scale(pyramidMiddleModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
         
-		finalMatrix = projectionMatrix * viewMatrix * pyramidModelMatrix;
+		finalMatrix = projectionMatrix * viewMatrix * pyramidMiddleModelMatrix;
 
 		matUniformLocation = glGetUniformLocation(program, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 		glDrawArrays(GL_TRIANGLES, 0, 18);
         
 
-		/*// MIDDLE PYRAMID
+		// LEFT PYRAMID
 
-		glm::mat4 pyramid2ModelMatrix = glm::mat4(1.0f);
-		pyramid2ModelMatrix = glm::translate(pyramid2ModelMatrix, glm::vec3(6.0f, -10.0f, 4.0f));
-		pyramid2ModelMatrix = glm::scale(pyramid2ModelMatrix, glm::vec3(2.0f, 2.0f, 2.0f));
-		pyramid2ModelMatrix = glm::rotate(pyramid2ModelMatrix, glm::radians(35.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		finalMatrix = projectionMatrix * viewMatrix * pyramid2ModelMatrix;
+         glBindVertexArray(vaoPyramid);
+         glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
-		matUniformLocation = glGetUniformLocation(program, "mat");
-		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-		//glDrawArrays(GL_TRIANGLES, 0, 18);*/
+         glm::mat4 pyramidLeftModelMatrix = glm::mat4(1.0f);
+         pyramidLeftModelMatrix = glm::translate(pyramidLeftModelMatrix, glm::vec3(-40.0f, -10.0f, -150.0f));
+         pyramidLeftModelMatrix = glm::scale(pyramidLeftModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+         
+         finalMatrix = projectionMatrix * viewMatrix * pyramidLeftModelMatrix;
+
+         matUniformLocation = glGetUniformLocation(program, "mat");
+         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+         glDrawArrays(GL_TRIANGLES, 0, 18);
+        
+        
+        // RIGHT PYRAMID
+
+         glBindVertexArray(vaoPyramid);
+         glBindTexture(GL_TEXTURE_2D, pyramidTex);
+
+         glm::mat4 pyramidRightModelMatrix = glm::mat4(1.0f);
+         pyramidRightModelMatrix = glm::translate(pyramidRightModelMatrix, glm::vec3(40.0f, -10.0f, -150.0f));
+         pyramidRightModelMatrix = glm::scale(pyramidRightModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+         
+         finalMatrix = projectionMatrix * viewMatrix * pyramidRightModelMatrix;
+
+         matUniformLocation = glGetUniformLocation(program, "mat");
+         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+         glDrawArrays(GL_TRIANGLES, 0, 18);
 
 		/*// Moving Pyramid
 
