@@ -237,22 +237,22 @@ int main()
 	// back 
 	pyramidVertices[6] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f }; 
 	pyramidVertices[7] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		1.0f, 0.0f }; 
-	pyramidVertices[8] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f }; 
+	pyramidVertices[8] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f }; 
 
 	// right 
 	pyramidVertices[9] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		0.0f, 0.0f };
 	pyramidVertices[10] = { 1.0f, 0.0f, 1.0f,	255, 255, 255,		1.0f, 0.0f };
-	pyramidVertices[11] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
+	pyramidVertices[11] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f };
 
 	// front
 	pyramidVertices[12] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		0.0f, 0.0f };
 	pyramidVertices[13] = { 1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
-	pyramidVertices[14] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
+	pyramidVertices[14] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f };
 
 	// left
 	pyramidVertices[15] = { -1.0f, 0.0f, 1.0f,	255, 255, 255,		0.0f, 0.0f };
 	pyramidVertices[16] = { -1.0f, 0.0f, -1.0f,	255, 255, 255,		1.0f, 0.0f };
-	pyramidVertices[17] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 0.1f };
+	pyramidVertices[17] = { 0.0f, 1.0f, 0.0f,	255, 255, 255,		0.5f, 1.0f };
 
     
 	/*Vertex hexVertices[52];
