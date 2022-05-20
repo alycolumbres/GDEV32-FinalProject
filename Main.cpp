@@ -284,75 +284,75 @@ int main()
     }
 
     
-	/*Vertex hexVertices[52];
+    Vertex hexVertices[52];
 
-	// front hexagon
-	hexVertices[0] = { 0.0f, 0.0f, 0.0f,	255, 255, 255,		0.5f, 0.5f };
-	hexVertices[1] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.75f, 1.0f };
-	hexVertices[2] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.5f };
-	hexVertices[3] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.75f, 0.0f };
-	hexVertices[4] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.0f };
-	hexVertices[5] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.0f, 0.5f };
-	hexVertices[6] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 1.0f };
-	hexVertices[7] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.75f, 1.0f };
+    // front hexagon
+    hexVertices[0] = { 0.0f, 0.0f, 0.0f,	255, 255, 255,		0.5f, 0.5f };
+    hexVertices[1] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.75f, 1.0f };
+    hexVertices[2] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.5f };
+    hexVertices[3] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.75f, 0.0f };
+    hexVertices[4] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.0f };
+    hexVertices[5] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.0f, 0.5f };
+    hexVertices[6] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 1.0f };
+    hexVertices[7] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.75f, 1.0f };
 
-	// front hexagon
-	hexVertices[8] = { 0.0f, 0.0f, 2.0f,	255, 255, 255,		0.5f, 0.5f };
-	hexVertices[9] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.75f, 1.0f };
-	hexVertices[10] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		1.0f, 0.5f };
-	hexVertices[11] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.75f, 0.0f };
-	hexVertices[12] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.0f };
-	hexVertices[13] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		0.0f, 0.5f };
-	hexVertices[14] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 1.0f };
-	hexVertices[15] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.75f, 1.0f };
+    // back hexagon
+    hexVertices[8] = { 0.0f, 0.0f, 2.0f,	255, 255, 255,		0.5f, 0.5f };
+    hexVertices[9] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.75f, 1.0f };
+    hexVertices[10] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		1.0f, 0.5f };
+    hexVertices[11] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.75f, 0.0f };
+    hexVertices[12] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.0f };
+    hexVertices[13] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		0.0f, 0.5f };
+    hexVertices[14] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 1.0f };
+    hexVertices[15] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.75f, 1.0f };
 
-	// top right
-	hexVertices[16] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		1.0f, 0.75f };
-	hexVertices[17] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.25f };
-	hexVertices[18] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.0f, 0.25f };
-	hexVertices[19] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		1.0f, 0.75f };
-	hexVertices[20] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.0f, 0.75f };
-	hexVertices[21] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.0f, 0.25f };
+    // top right
+    hexVertices[16] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.25f };
+    hexVertices[17] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.0f, 0.75f };
+    hexVertices[18] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		1.0f, 0.75f };
+    hexVertices[19] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		1.0f, 0.25f };
+    hexVertices[20] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.0f, 0.75f };
+    hexVertices[21] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.0f, 0.25f };
 
-	// top
-	hexVertices[22] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[23] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[24] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[25] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[26] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[27] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    // top
+    hexVertices[22] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[23] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[24] = { 0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[25] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[26] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[27] = { 0.5f, 1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
 
-	// top left
-	hexVertices[28] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.0f, 0.75f };
-	hexVertices[29] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
-	hexVertices[30] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
-	hexVertices[31] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
-	hexVertices[32] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		1.0f, 0.25f };
-	hexVertices[33] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
+    // top left
+    hexVertices[28] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		1.0f, 0.25f };
+    hexVertices[29] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.0f, 0.75f };
+    hexVertices[30] = { -0.5f, 1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
+    hexVertices[31] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		1.0f, 0.25f };
+    hexVertices[32] = { -0.5f, 1.0f, 0.0f,	255, 255, 255,		0.0f, 0.75f };
+    hexVertices[33] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
 
-	// bottom left
-	hexVertices[34] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[35] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[36] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[37] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[38] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[39] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    // bottom left
+    hexVertices[34] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f }; // bottom right
+    hexVertices[35] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f }; // top left
+    hexVertices[36] = { -1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f }; // top right
+    hexVertices[37] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f }; // bottom right
+    hexVertices[38] = { -1.0f, 0.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f }; // top left
+    hexVertices[39] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f }; // bottom left
 
-	// bottom
-	hexVertices[40] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.75f };
-	hexVertices[41] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
-	hexVertices[42] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
-	hexVertices[43] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
-	hexVertices[44] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.25f };
-	hexVertices[45] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
+    // bottom
+    hexVertices[40] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f }; // bottom right
+    hexVertices[41] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f }; // top left
+    hexVertices[42] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.75f }; // top right
+    hexVertices[43] = { -0.5f, -1.0f, 0.0f,	255, 255, 255,		0.0f, 0.25f };
+    hexVertices[44] = { -0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.25f };
+    hexVertices[45] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		1.0f, 0.75f };
 
-	// bottom right
-	hexVertices[46] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[47] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[48] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[49] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[50] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
-	hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };*/
+    // bottom right
+    hexVertices[46] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f }; // bottom right
+    hexVertices[47] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f }; // top left
+    hexVertices[48] = { 1.0f, 0.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f }; // top right
+    hexVertices[49] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[50] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
 
     
     
