@@ -21,9 +21,10 @@ out vec2 outUV;
 out vec3 outColor;
 
 out vec3 fragPosition;
+out vec4 fragPositionLight;
 out vec3 fragNormal;
 
-uniform mat4 mat, model;
+uniform mat4 mat, model, lightProjection, lightViewMatrix;
 
 
 void main()
@@ -32,8 +33,9 @@ void main()
 	// Vertex positions are ... positions, so we specify the w-coordinate as 1.0.
     
     fragPosition = vec3(model * vec4(vertexPosition, 1.f));
+    fragPositionLight = lightProjection * lightViewMatrix * model * vec4(vertexPosition, 1.f);
     fragNormal = mat3(transpose(inverse(model))) * vertexNormal;
-	vec4 finalPosition = mat * vec4(vertexPosition, 1.0);
+    vec4 finalPosition = mat * vec4(vertexPosition, 1.0);
 
 	// Give OpenGL the final position of our vertex
 	gl_Position = finalPosition;

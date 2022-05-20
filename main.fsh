@@ -12,13 +12,15 @@ in vec3 outColor;
 out vec4 color;
 
 in vec3 fragPosition;
+in vec4 fragPositionLight;
 in vec3 fragNormal;
 
 // Texture unit of the texture
-uniform sampler2D tex;
+uniform sampler2D tex, depthTex;
 
-uniform vec3 pointLightPosition, ambientPointComponent, ambientDirectionalComponent, diffuseComponent, specularComponent, eyePosition;
-uniform float ambientPointIntensity, ambientDirectionalIntensity, diffuseIntensity, specularIntensity, shininess;
+uniform vec3 eyePosition, directionalLightDirection, ambientDirectionalComponent, diffuseComponent, specularComponent, floorNormal;
+
+uniform float ambientDirectionalIntensity, diffuseIntensity, specularIntensity, shininess;
 
 void main()
 {
@@ -26,32 +28,43 @@ void main()
 	// and output it as our final fragment color
 	vec4 fragColor = texture(tex, outUV);
     
+    // DIRECTIONAL LIGHT
     // AMBIENT
-        
-    // For directional light
     vec3 directionalLightAmbient = ambientDirectionalIntensity * ambientDirectionalComponent;
-    
     
     // DIFFUSE
     vec3 norm = normalize(fragNormal);
     
-    // For directional light
-    vec3 directionalLightDir = normalize( vec3(0, -1, 0) );
-    float directionalLightDiff = max(dot(norm, -directionalLightDir), 0.0f);
+    vec3 directionalLightDirNormalized = normalize( directionalLightDirection );
+    float directionalLightDiff = max(dot(norm, -directionalLightDirNormalized), 0.0f);
     vec3 directionalLightDiffuse = directionalLightDiff * (diffuseComponent * diffuseIntensity);
-    
     
     // SPECULAR
     vec3 viewDir = normalize(eyePosition - fragPosition);
     
-    // For directional light
-    vec3 directionalLightReflectDir = reflect(directionalLightDir, norm);
+    vec3 directionalLightReflectDir = reflect(directionalLightDirNormalized, norm);
     float directionalLightSpec = pow(max(dot(directionalLightReflectDir, viewDir), 0.0), shininess);
     vec3 directionalLightSpecular = directionalLightSpec * (specularComponent * specularIntensity);
     
+    // Shadow calculation
+    vec3 fragLightNDC = vec3(fragPositionLight) / fragPositionLight.w;  // homogeneous to cartesian
+    fragLightNDC = (fragLightNDC + 1) / 2;                              // [-1, 1] to [0, 1]
+    float depthValue = texture(depthTex, fragLightNDC.xy).x;
     
-    // Final
-    vec3 finalColor = (directionalLightAmbient + directionalLightDiffuse + directionalLightSpecular) * vec3(fragColor);
-    //vec3 finalColor = vec3(fragColor);
-    color = vec4(finalColor, 1.f);
+    // Removing shadow acne
+    float bias = max(0.05 * (1.0 - dot(floorNormal, directionalLightDirection)), 0.005);
+    
+    if(depthValue < fragLightNDC.z)
+    {
+        // Final
+        vec3 finalColor = directionalLightAmbient * vec3(fragColor);
+        color = vec4(finalColor, 1.f);
+    }
+    else
+    {
+        vec3 finalColor = (directionalLightAmbient +
+                           directionalLightDiffuse +
+                           directionalLightSpecular) * vec3(fragColor);
+        color = vec4(finalColor, 1.f);
+    }
 }

@@ -69,6 +69,8 @@ glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+glm::vec3 directionalLightPosition = glm::vec3(50.0f, 60.0f, -100.0f);
+
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
@@ -480,11 +482,42 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, u)));
 
 	glBindVertexArray(0);*/
+    
+    
+    
+    // FRAME BUFFER OBJECT
+
+    GLuint framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    GLuint depthTex;
+    glGenTextures(1, &depthTex);
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+    glDrawBuffer(GL_NONE);
+    
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cout << "Error! Framebuffer not complete!" << std::endl;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
     
 	// Create a shader program
-	GLuint program = CreateShaderProgram("main.vsh", "main.fsh");
+	GLuint mainProgram = CreateShaderProgram("main.vsh", "main.fsh");
+    GLuint depthProgram = CreateShaderProgram("depth.vsh", "depth.fsh");
+    
+    glm::vec3 floorNormal = glm::vec3(floorVertices[6].nx, floorVertices[6].ny, floorVertices[6].nz);
+    GLint floorNormalUniformLocation = glGetUniformLocation(mainProgram, "floorNormal");
+    glUniform3fv(floorNormalUniformLocation, 1, glm::value_ptr(floorNormal));
 
 	// Tell OpenGL the dimensions of the region where stuff will be drawn.
 	// For now, tell OpenGL to use the whole screen
@@ -609,55 +642,187 @@ int main()
 		deltaTime = time - lastFrame;
 		lastFrame = time;
 
-		// Use the shader program that we created
-		glUseProgram(program);
+		
         
+        // --- SHADOW MAPPING ---
+        glm::mat4 lightProjection = glm::ortho(-100.0f, 100.0f, -50.0f, 20.0f, -100.0f, 100.0f);
+        
+        glm::vec3 directionalLightDirection = glm::vec3(1.0f, -1.0f, 0.0f);
+        GLint directionalLightDirectionUniformLocation = glGetUniformLocation(mainProgram, "directionalLightDirection");
+        glUniform3fv(directionalLightDirectionUniformLocation, 1, glm::value_ptr(directionalLightDirection));
+
+        glm::mat4 lightViewMatrix = glm::lookAt(directionalLightPosition, directionalLightPosition + directionalLightDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+        
+        
+        // FIRST PASS
+        
+        glUseProgram(depthProgram);
+        
+        GLint lightProjectionUniformLocation = glGetUniformLocation(depthProgram, "lightProjection");
+        glUniformMatrix4fv(lightProjectionUniformLocation, 1, GL_FALSE, glm::value_ptr(lightProjection));
+
+        GLint lightViewMatrixUniformLocation = glGetUniformLocation(depthProgram, "lightViewMatrix");
+        glUniformMatrix4fv(lightViewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        // Clear the color and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glViewport(0, 0, 1024, 1024);
+        
+        // FLOOR
+
+        // Use the vertex array object that we created
+        glBindVertexArray(vaoFloor);
+
+        // Bind our texture to texture unit 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, floorTex);
+
+        // Make our sampler in the fragment shader use texture unit 0
+        GLint texUniformLocation = glGetUniformLocation(depthProgram, "tex");
+        glUniform1i(texUniformLocation, 0);
+
+        glm::mat4 floorModelMatrix = glm::mat4(1.0f);
+        floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(0.0f, 40.0f, -50.0f));
+        floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(100.0f, 50.0f, 150.0f));
+        floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        
+        glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), windowWidth / windowHeight, 0.1f, 100.0f);
+        glm::mat4 finalMatrix = projectionMatrix * viewMatrix * floorModelMatrix;
+
+        GLint matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        
+        GLint modelUniformLocation = glGetUniformLocation(depthProgram, "model");
+        glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, glm::value_ptr(floorModelMatrix));
+        
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+
+        // MIDDLE PYRAMID
+
+        glBindVertexArray(vaoPyramid);
+        glBindTexture(GL_TEXTURE_2D, pyramidTex);
+
+        glm::mat4 pyramidMiddleModelMatrix = glm::mat4(1.0f);
+        pyramidMiddleModelMatrix = glm::translate(pyramidMiddleModelMatrix, glm::vec3(0.0f, -10.0f, -80.0f));
+        pyramidMiddleModelMatrix = glm::scale(pyramidMiddleModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+        
+        finalMatrix = projectionMatrix * viewMatrix * pyramidMiddleModelMatrix;
+
+        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        glDrawArrays(GL_TRIANGLES, 0, 18);
+        
+
+        // LEFT PYRAMID
+
+        glBindVertexArray(vaoPyramid);
+        glBindTexture(GL_TEXTURE_2D, pyramidTex);
+
+        glm::mat4 pyramidLeftModelMatrix = glm::mat4(1.0f);
+        pyramidLeftModelMatrix = glm::translate(pyramidLeftModelMatrix, glm::vec3(-40.0f, -10.0f, -150.0f));
+        pyramidLeftModelMatrix = glm::scale(pyramidLeftModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+         
+        finalMatrix = projectionMatrix * viewMatrix * pyramidLeftModelMatrix;
+
+        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        glDrawArrays(GL_TRIANGLES, 0, 18);
+        
+        
+        // RIGHT PYRAMID
+
+        glBindVertexArray(vaoPyramid);
+        glBindTexture(GL_TEXTURE_2D, pyramidTex);
+        
+        glm::mat4 pyramidRightModelMatrix = glm::mat4(1.0f);
+        pyramidRightModelMatrix = glm::translate(pyramidRightModelMatrix, glm::vec3(40.0f, -10.0f, -150.0f));
+        pyramidRightModelMatrix = glm::scale(pyramidRightModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
+         
+        finalMatrix = projectionMatrix * viewMatrix * pyramidRightModelMatrix;
+
+        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        glDrawArrays(GL_TRIANGLES, 0, 18);
+        
+        // "Unuse" the vertex array object
+        glBindVertexArray(0);
+        
+        
+        // SECOND PASS
+        
+        // Use the shader program that we created
+        glUseProgram(mainProgram);
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glActiveTexture(depthTex);
+        glBindTexture(GL_TEXTURE_2D, depthTex);
+        
+        GLint depthTexUniformLocation = glGetUniformLocation(mainProgram, "depthTex");
+        glUniform1i(depthTexUniformLocation, 0);
+        
+        lightProjectionUniformLocation = glGetUniformLocation(mainProgram, "lightProjection");
+        glUniformMatrix4fv(lightProjectionUniformLocation, 1, GL_FALSE, glm::value_ptr(lightProjection));
+
+        lightViewMatrixUniformLocation = glGetUniformLocation(mainProgram, "lightViewMatrix");
+        glUniformMatrix4fv(lightViewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(lightViewMatrix));
+        
+        int framebufferWidth, framebufferHeight;
+        glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+        glViewport(0, 0, framebufferWidth, framebufferHeight);
         
         
         // --- LIGHTING ---
         
         // Eye position
         glm::vec3 eyePosition = cameraPosition;
-        GLint eyePositionUniformLocation = glGetUniformLocation(program, "eyePosition");
+        GLint eyePositionUniformLocation = glGetUniformLocation(mainProgram, "eyePosition");
         glUniform3fv(eyePositionUniformLocation, 1, glm::value_ptr(eyePosition));
         
         
         // Ambient intensity FOR DIRECTIONAL LIGHT
         float ambientDirectionalIntensity = 0.8f;
-        GLint ambientDirectionalIntensityUniformLocation = glGetUniformLocation(program, "ambientDirectionalIntensity");
+        GLint ambientDirectionalIntensityUniformLocation = glGetUniformLocation(mainProgram, "ambientDirectionalIntensity");
         glUniform1f(ambientDirectionalIntensityUniformLocation, ambientDirectionalIntensity);
         
         // Ambient component FOR DIRECTIONAL LIGHT
         glm::vec3 ambientDirectionalComponent = glm::vec3(1.0f, 0.9f, 0.8f);
-        GLint ambientDirectionalComponentUniformLocation = glGetUniformLocation(program, "ambientDirectionalComponent");
+        GLint ambientDirectionalComponentUniformLocation = glGetUniformLocation(mainProgram, "ambientDirectionalComponent");
         glUniform3fv(ambientDirectionalComponentUniformLocation, 1, glm::value_ptr(ambientDirectionalComponent));
         
         
         // Diffuse intensity
         float diffuseIntensity = 0.8f;
-        GLint diffuseIntensityUniformLocation = glGetUniformLocation(program, "diffuseIntensity");
+        GLint diffuseIntensityUniformLocation = glGetUniformLocation(mainProgram, "diffuseIntensity");
         glUniform1f(diffuseIntensityUniformLocation, diffuseIntensity);
         
         // Diffuse component
         glm::vec3 diffuseComponent = glm::vec3(0.8f, 0.8f, 0.8f);
-        GLint diffuseComponentUniformLocation = glGetUniformLocation(program, "diffuseComponent");
+        GLint diffuseComponentUniformLocation = glGetUniformLocation(mainProgram, "diffuseComponent");
         glUniform3fv(diffuseComponentUniformLocation, 1, glm::value_ptr(diffuseComponent));
         
         
         // Specular intensity
         float specularIntensity = 5.0f;
-        GLint specularIntensityUniformLocation = glGetUniformLocation(program, "specularIntensity");
+        GLint specularIntensityUniformLocation = glGetUniformLocation(mainProgram, "specularIntensity");
         glUniform1f(specularIntensityUniformLocation, specularIntensity);
         
         // Specular component
         glm::vec3 specularComponent = glm::vec3(0.4f, 0.4f, 0.4f);
-        GLint specularComponentUniformLocation = glGetUniformLocation(program, "specularComponent");
+        GLint specularComponentUniformLocation = glGetUniformLocation(mainProgram, "specularComponent");
         glUniform3fv(specularComponentUniformLocation, 1, glm::value_ptr(specularComponent));
         
         
         // Shininess
         float shininess = 64.0f;
-        GLint shininessUniformLocation = glGetUniformLocation(program, "shininess");
+        GLint shininessUniformLocation = glGetUniformLocation(mainProgram, "shininess");
         glUniform1f(shininessUniformLocation, shininess);
         
         
@@ -676,22 +841,22 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, floorTex);
 
 		// Make our sampler in the fragment shader use texture unit 0
-		GLint texUniformLocation = glGetUniformLocation(program, "tex");
+		texUniformLocation = glGetUniformLocation(mainProgram, "tex");
 		glUniform1i(texUniformLocation, 0);
 
-		glm::mat4 floorModelMatrix = glm::mat4(1.0f);
+		floorModelMatrix = glm::mat4(1.0f);
 		floorModelMatrix = glm::translate(floorModelMatrix, glm::vec3(0.0f, 40.0f, -50.0f));
 		floorModelMatrix = glm::scale(floorModelMatrix, glm::vec3(100.0f, 50.0f, 150.0f));
 		floorModelMatrix = glm::rotate(floorModelMatrix, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         
-		glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-		glm::mat4 projectionMatrix = glm::perspective(glm::radians(fov), windowWidth / windowHeight, 0.1f, 100.0f);
-		glm::mat4 finalMatrix = projectionMatrix * viewMatrix * floorModelMatrix;
+		viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+		projectionMatrix = glm::perspective(glm::radians(fov), windowWidth / windowHeight, 0.1f, 100.0f);
+		finalMatrix = projectionMatrix * viewMatrix * floorModelMatrix;
 
-		GLint matUniformLocation = glGetUniformLocation(program, "mat");
+		matUniformLocation = glGetUniformLocation(mainProgram, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         
-        GLint modelUniformLocation = glGetUniformLocation(program, "model");
+        modelUniformLocation = glGetUniformLocation(mainProgram, "model");
         glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, glm::value_ptr(floorModelMatrix));
         
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -702,13 +867,13 @@ int main()
 		glBindVertexArray(vaoPyramid);
 		glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
-		glm::mat4 pyramidMiddleModelMatrix = glm::mat4(1.0f);
+		pyramidMiddleModelMatrix = glm::mat4(1.0f);
         pyramidMiddleModelMatrix = glm::translate(pyramidMiddleModelMatrix, glm::vec3(0.0f, -10.0f, -80.0f));
         pyramidMiddleModelMatrix = glm::scale(pyramidMiddleModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
         
 		finalMatrix = projectionMatrix * viewMatrix * pyramidMiddleModelMatrix;
 
-		matUniformLocation = glGetUniformLocation(program, "mat");
+		matUniformLocation = glGetUniformLocation(mainProgram, "mat");
 		glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 		glDrawArrays(GL_TRIANGLES, 0, 18);
         
@@ -718,13 +883,13 @@ int main()
          glBindVertexArray(vaoPyramid);
          glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
-         glm::mat4 pyramidLeftModelMatrix = glm::mat4(1.0f);
+         pyramidLeftModelMatrix = glm::mat4(1.0f);
          pyramidLeftModelMatrix = glm::translate(pyramidLeftModelMatrix, glm::vec3(-40.0f, -10.0f, -150.0f));
          pyramidLeftModelMatrix = glm::scale(pyramidLeftModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
          
          finalMatrix = projectionMatrix * viewMatrix * pyramidLeftModelMatrix;
 
-         matUniformLocation = glGetUniformLocation(program, "mat");
+         matUniformLocation = glGetUniformLocation(mainProgram, "mat");
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 18);
         
@@ -734,13 +899,13 @@ int main()
          glBindVertexArray(vaoPyramid);
          glBindTexture(GL_TEXTURE_2D, pyramidTex);
 
-         glm::mat4 pyramidRightModelMatrix = glm::mat4(1.0f);
+         pyramidRightModelMatrix = glm::mat4(1.0f);
          pyramidRightModelMatrix = glm::translate(pyramidRightModelMatrix, glm::vec3(40.0f, -10.0f, -150.0f));
          pyramidRightModelMatrix = glm::scale(pyramidRightModelMatrix, glm::vec3(30.0f, 40.0f, 30.0f));
          
          finalMatrix = projectionMatrix * viewMatrix * pyramidRightModelMatrix;
 
-         matUniformLocation = glGetUniformLocation(program, "mat");
+         matUniformLocation = glGetUniformLocation(mainProgram, "mat");
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 18);
 
@@ -803,7 +968,7 @@ int main()
 	// --- Cleanup ---
 
 	// Make sure to delete the shader program
-	glDeleteProgram(program);
+	glDeleteProgram(mainProgram);
 
 	// Delete the VBO that contains our vertices
     glDeleteBuffers(1, &vboFloor);
