@@ -1080,6 +1080,23 @@ int main()
         matUniformLocation = glGetUniformLocation(depthProgram, "mat");
         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        // ROTATING CUBE
+
+        glBindVertexArray(vaoCube);
+        glBindTexture(GL_TEXTURE_2D, cubeTex);
+
+        cubeModelMatrix = glm::mat4(1.0f);
+        cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 0.0f, 50.0f));
+        cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(5.0f, 5.0f, 5.1f));
+        cubeModelMatrix = glm::rotate(cubeModelMatrix, glm::radians(60.0f * time), glm::vec3(1.0f, 1.0f, 1.0f));
+
+        finalMatrix = projectionMatrix * viewMatrix * cubeModelMatrix;
+
+        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         
         // "Unuse" the vertex array object
         glBindVertexArray(0);
@@ -1429,20 +1446,22 @@ int main()
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
+         // ROTATING CUBE
+
          glBindVertexArray(vaoCube);
          glBindTexture(GL_TEXTURE_2D, cubeTex);
 
-         /**
          cubeModelMatrix = glm::mat4(1.0f);
-         cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+         cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 0.0f, 50.0f));
          cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(5.0f, 5.0f, 5.1f));
+         cubeModelMatrix = glm::rotate(cubeModelMatrix, glm::radians(60.0f * time), glm::vec3(1.0f, 1.0f, 1.0f));
 
          finalMatrix = projectionMatrix * viewMatrix * cubeModelMatrix;
 
          matUniformLocation = glGetUniformLocation(mainProgram, "mat");
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 36);
-         */
 
 		/*// Moving Pyramid
 
