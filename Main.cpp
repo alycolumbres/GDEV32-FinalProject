@@ -223,7 +223,34 @@ int main()
     cubeVertices[32] = { -1.0f, 1.0f, -1.0f,      255, 255, 255,     0.5f, 1.0f }; // top left
     cubeVertices[33] = { 1.0f, -1.0f, -1.0f,      255, 255, 255,     0.0f, 0.5f }; // bottom right
     cubeVertices[34] = { 1.0f, 1.0f, -1.0f,       255, 255, 255,     0.0f, 1.0f }; // top right
-    cubeVertices[35] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left*/
+    cubeVertices[35] = { -1.0f, -1.0f, -1.0f,     255, 255, 255,     0.5f, 0.5f }; // bottom left
+    
+    // Loop to calculate normal vertices per face
+    for( int i=0; i < (sizeof(cubeVertices)/sizeof(cubeVertices[0])); i+=6 )
+    {
+        glm::vec3 v1( cubeVertices[i].x, cubeVertices[i].y, cubeVertices[i].z );
+        glm::vec3 v2( cubeVertices[i+1].x, cubeVertices[i+1].y, cubeVertices[i+1].z );
+        glm::vec3 v3( cubeVertices[i+2].x, cubeVertices[i+2].y, cubeVertices[i+2].z );
+        
+        glm::vec3 a;
+        a.x = v2.x - v1.x;
+        a.y = v2.y - v1.y;
+        a.z = v2.z - v1.z;
+        
+        glm::vec3 b;
+        b.x = v3.x - v1.x;
+        b.y = v3.y - v1.y;
+        b.z = v3.z - v1.z;
+        
+        glm::vec3 crossProd( glm::cross(b, a) );
+        
+        for( int j=i; j < (i+6); j+=1 )
+        {
+            cubeVertices[j].nx = crossProd.x;
+            cubeVertices[j].ny = crossProd.y;
+            cubeVertices[j].nz = crossProd.z;
+        }
+    }
 
     
 	Vertex pyramidVertices[18];
@@ -353,6 +380,33 @@ int main()
     hexVertices[49] = { 0.5f, -1.0f, 0.0f,	255, 255, 255,		0.25f, 0.15f };
     hexVertices[50] = { 1.0f, 0.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
     hexVertices[51] = { 0.5f, -1.0f, 2.0f,	255, 255, 255,		0.25f, 0.15f };
+    
+    // Loop to calculate normal vertices per face
+    for( int i=0; i < (sizeof(hexVertices)/sizeof(hexVertices[0])); i+=6 )
+    {
+        glm::vec3 v1( hexVertices[i].x, hexVertices[i].y, hexVertices[i].z );
+        glm::vec3 v2( hexVertices[i+1].x, hexVertices[i+1].y, hexVertices[i+1].z );
+        glm::vec3 v3( hexVertices[i+2].x, hexVertices[i+2].y, hexVertices[i+2].z );
+        
+        glm::vec3 a;
+        a.x = v2.x - v1.x;
+        a.y = v2.y - v1.y;
+        a.z = v2.z - v1.z;
+        
+        glm::vec3 b;
+        b.x = v3.x - v1.x;
+        b.y = v3.y - v1.y;
+        b.z = v3.z - v1.z;
+        
+        glm::vec3 crossProd( glm::cross(b, a) );
+        
+        for( int j=i; j < (i+6); j+=1 )
+        {
+            hexVertices[j].nx = crossProd.x;
+            hexVertices[j].ny = crossProd.y;
+            hexVertices[j].nz = crossProd.z;
+        }
+    }
 
     
     
@@ -1387,7 +1441,7 @@ int main()
 
 void keyboardInput(GLFWwindow* window)
 {
-	float speed = 20.0 * deltaTime;
+	float speed = 40.0 * deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
