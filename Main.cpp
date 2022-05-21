@@ -730,6 +730,52 @@ int main()
         std::cerr << "Failed to load image" << std::endl;
     }
 
+    // Create a variable that will contain the ID for our texture,
+    // and use glGenTextures() to generate the texture itself
+    GLuint cubeTex;
+    glGenTextures(1, &cubeTex);
+
+    // --- Load our image using stb_image ---
+
+    // Im image-space (pixels), (0, 0) is the upper-left corner of the image
+    // However, in u-v coordinates, (0, 0) is the lower-left corner of the image
+    // This means that the image will appear upside-down when we use the image data as is
+    // This function tells stbi to flip the image vertically so that it is not upside-down when we use it
+    stbi_set_flip_vertically_on_load(true);
+
+    // Read the image data and store it in an unsigned char array
+    imageData = stbi_load("cube texture.png", &imageWidth, &imageHeight, &numChannels, 0);
+
+    // Make sure that we actually loaded the image before uploading the data to the GPU
+    if (imageData != nullptr)
+    {
+        // Our texture is 2D, so we bind our texture to the GL_TEXTURE_2D target
+        glBindTexture(GL_TEXTURE_2D, cubeTex);
+
+        // Set the filtering methods for magnification and minification
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        // Set the wrapping method for the s-axis (x-axis) and t-axis (y-axis)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        // Upload the image data to GPU memory
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+        // If we set minification to use mipmaps, we can tell OpenGL to generate the mipmaps for us
+        //glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Once we have copied the data over to the GPU, we can delete
+        // the data on the CPU side, since we won't be using it anymore
+        stbi_image_free(imageData);
+        imageData = nullptr;
+    }
+    else
+    {
+        std::cerr << "Failed to load image" << std::endl;
+    }
+
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -849,14 +895,14 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 18);
         
 
-        // LEFT TALL PILLAR 1
+        // LEFT SHORT PILLAR 1
 
         glBindVertexArray(vaoHex);
         glBindTexture(GL_TEXTURE_2D, pillarTex);
 
         glm::mat4 pillarModelMatrix = glm::mat4(1.0f);
-        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-30.0f, 15.0f, 70.0f));
-        pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 15.0f, 2.0f));
+        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-30.0f, 10.0f, 70.0f));
+        pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
         pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
         finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
@@ -869,7 +915,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 16, 36);
 
         
-        // LEFT SHORT PILLAR 1
+        // LEFT SHORT PILLAR 2
 
         pillarModelMatrix = glm::mat4(1.0f);
         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-50.0f, 10.0f, 70.0f));
@@ -886,7 +932,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 16, 36);
         
 
-        // LEFT SHORT PILLAR 2
+        // LEFT SHORT PILLAR 3
 
         pillarModelMatrix = glm::mat4(1.0f);
         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-70.0f, 10.0f, 70.0f));
@@ -903,27 +949,10 @@ int main()
         glDrawArrays(GL_TRIANGLES, 16, 36);
         
 
-        // RIGHT TALL PILLAR 1
-
-        pillarModelMatrix = glm::mat4(1.0f);
-        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(30.0f, 15.0f, 70.0f));
-        pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 15.0f, 2.0f));
-        pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
-
-        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
-        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
-        glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
-        glDrawArrays(GL_TRIANGLES, 16, 36);
-        
-
         // RIGHT SHORT PILLAR 1
 
         pillarModelMatrix = glm::mat4(1.0f);
-        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(50.0f, 10.0f, 70.0f));
+        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(30.0f, 10.0f, 70.0f));
         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
         pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -940,6 +969,23 @@ int main()
         // RIGHT SHORT PILLAR 2
 
         pillarModelMatrix = glm::mat4(1.0f);
+        pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(50.0f, 10.0f, 70.0f));
+        pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
+        pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
+
+        matUniformLocation = glGetUniformLocation(depthProgram, "mat");
+        glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+        glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
+        glDrawArrays(GL_TRIANGLES, 16, 36);
+        
+
+        // RIGHT SHORT PILLAR 3
+
+        pillarModelMatrix = glm::mat4(1.0f);
         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(70.0f, 10.0f, 70.0f));
         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
         pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -954,7 +1000,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 16, 36);
         
 
-        // LEFT TALL PILLAR 2
+        // LEFT TALL PILLAR 1
 
         pillarModelMatrix = glm::mat4(1.0f);
         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-10.0f, 15.0f, 70.0f));
@@ -971,7 +1017,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 16, 36);
         
 
-        // RIGHT TALL PILLAR 2
+        // RIGHT TALL PILLAR 1
 
         pillarModelMatrix = glm::mat4(1.0f);
         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(10.0f, 15.0f, 70.0f));
@@ -1027,7 +1073,7 @@ int main()
 
         cubeModelMatrix = glm::mat4(1.0f);
         cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 15.0f, 0.0f));
-        cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(32.0f, 1.0f, 2.1f));
+        cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(15.0f, 1.0f, 2.1f));
 
         finalMatrix = projectionMatrix * viewMatrix * cubeModelMatrix;
 
@@ -1197,30 +1243,13 @@ int main()
          glDrawArrays(GL_TRIANGLES, 0, 18);
 
         
-         // LEFT TALL PILLAR 1
+         // LEFT SHORT PILLAR 1
 
          glBindVertexArray(vaoHex);
          glBindTexture(GL_TEXTURE_2D, pillarTex);
 
          pillarModelMatrix = glm::mat4(1.0f);
-         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-30.0f, 15.0f, 0.0f));
-         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 15.0f, 2.0f));
-         pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-         finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
-
-         matUniformLocation = glGetUniformLocation(mainProgram, "mat");
-         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-
-         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
-         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
-         glDrawArrays(GL_TRIANGLES, 16, 36);
-
-        
-         // LEFT SHORT PILLAR 1
-
-         pillarModelMatrix = glm::mat4(1.0f);
-         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-50.0f, 10.0f, 0.0f));
+         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-30.0f, 10.0f, 0.0f));
          pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
          pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -1237,7 +1266,7 @@ int main()
          // LEFT SHORT PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
-         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-70.0f, 10.0f, 0.0f));
+         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-50.0f, 10.0f, 0.0f));
          pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
          pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -1251,11 +1280,11 @@ int main()
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
         
-         // RIGHT TALL PILLAR 1
+         // LEFT SHORT PILLAR 3
 
          pillarModelMatrix = glm::mat4(1.0f);
-         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(30.0f, 15.0f, 0.0f));
-         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 15.0f, 2.0f));
+         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-70.0f, 10.0f, 0.0f));
+         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
          pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
          finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
@@ -1271,7 +1300,7 @@ int main()
          // RIGHT SHORT PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
-         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(50.0f, 10.0f, 0.0f));
+         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(30.0f, 10.0f, 0.0f));
          pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
          pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -1288,6 +1317,23 @@ int main()
          // RIGHT SHORT PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
+         pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(50.0f, 10.0f, 0.0f));
+         pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
+         pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+         finalMatrix = projectionMatrix * viewMatrix * pillarModelMatrix;
+
+         matUniformLocation = glGetUniformLocation(mainProgram, "mat");
+         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
+         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
+         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
+         glDrawArrays(GL_TRIANGLES, 16, 36);
+
+        
+         // RIGHT SHORT PILLAR 3
+
+         pillarModelMatrix = glm::mat4(1.0f);
          pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(70.0f, 10.0f, 0.0f));
          pillarModelMatrix = glm::scale(pillarModelMatrix, glm::vec3(2.0f, 10.0f, 2.0f));
          pillarModelMatrix = glm::rotate(pillarModelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -1302,7 +1348,7 @@ int main()
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
         
-         // LEFT TALL PILLAR 2
+         // LEFT TALL PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
          pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(-10.0f, 15.0f, 0.0f));
@@ -1319,7 +1365,7 @@ int main()
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
         
-         // RIGHT TALL PILLAR 2
+         // RIGHT TALL PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
          pillarModelMatrix = glm::translate(pillarModelMatrix, glm::vec3(10.0f, 15.0f, 0.0f));
@@ -1375,14 +1421,28 @@ int main()
 
          cubeModelMatrix = glm::mat4(1.0f);
          cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 15.0f, 0.0f));
-         cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(32.0f, 1.0f, 2.1f));
+         cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(15.0f, 1.0f, 2.1f));
 
          finalMatrix = projectionMatrix * viewMatrix * cubeModelMatrix;
 
          matUniformLocation = glGetUniformLocation(mainProgram, "mat");
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 36);
-         
+
+         glBindVertexArray(vaoCube);
+         glBindTexture(GL_TEXTURE_2D, cubeTex);
+
+         /**
+         cubeModelMatrix = glm::mat4(1.0f);
+         cubeModelMatrix = glm::translate(cubeModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+         cubeModelMatrix = glm::scale(cubeModelMatrix, glm::vec3(5.0f, 5.0f, 5.1f));
+
+         finalMatrix = projectionMatrix * viewMatrix * cubeModelMatrix;
+
+         matUniformLocation = glGetUniformLocation(mainProgram, "mat");
+         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+         glDrawArrays(GL_TRIANGLES, 0, 36);
+         */
 
 		/*// Moving Pyramid
 
