@@ -848,8 +848,6 @@ int main()
         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 18);
         
-        // "Unuse" the vertex array object
-        glBindVertexArray(0);
 
         // LEFT TALL PILLAR 1
 
@@ -870,6 +868,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
         // LEFT SHORT PILLAR 1
 
         pillarModelMatrix = glm::mat4(1.0f);
@@ -885,6 +884,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // LEFT SHORT PILLAR 2
 
@@ -901,6 +901,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // RIGHT TALL PILLAR 1
 
@@ -917,6 +918,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // RIGHT SHORT PILLAR 1
 
@@ -933,6 +935,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // RIGHT SHORT PILLAR 2
 
@@ -949,6 +952,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // LEFT TALL PILLAR 2
 
@@ -965,6 +969,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // RIGHT TALL PILLAR 2
 
@@ -981,6 +986,7 @@ int main()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 8);
         glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
         glDrawArrays(GL_TRIANGLES, 16, 36);
+        
 
         // CUBE ON TOP OF LEFT PILLARS
 
@@ -996,6 +1002,7 @@ int main()
         matUniformLocation = glGetUniformLocation(depthProgram, "mat");
         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        
 
         // CUBE ON TOP OF RIGHT PILLARS
 
@@ -1011,6 +1018,7 @@ int main()
         matUniformLocation = glGetUniformLocation(depthProgram, "mat");
         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        
 
         // CUBE ON TOP OF MIDDLE PILLARS
 
@@ -1026,6 +1034,11 @@ int main()
         matUniformLocation = glGetUniformLocation(depthProgram, "mat");
         glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        // "Unuse" the vertex array object
+        glBindVertexArray(0);
+        
+        
         
         // SECOND PASS
         
@@ -1183,6 +1196,7 @@ int main()
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 18);
 
+        
          // LEFT TALL PILLAR 1
 
          glBindVertexArray(vaoHex);
@@ -1202,6 +1216,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // LEFT SHORT PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1218,6 +1233,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // LEFT SHORT PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1234,6 +1250,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // RIGHT TALL PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1250,6 +1267,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // RIGHT SHORT PILLAR 1
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1266,6 +1284,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // RIGHT SHORT PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1282,6 +1301,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // LEFT TALL PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1298,6 +1318,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // RIGHT TALL PILLAR 2
 
          pillarModelMatrix = glm::mat4(1.0f);
@@ -1314,6 +1335,7 @@ int main()
          glDrawArrays(GL_TRIANGLE_FAN, 8, 8);
          glDrawArrays(GL_TRIANGLES, 16, 36);
 
+        
          // CUBE ON TOP OF LEFT PILLARS
 
          glBindVertexArray(vaoCube);
@@ -1329,6 +1351,7 @@ int main()
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        
          // CUBE ON TOP OF RIGHT PILLARS
 
          glBindVertexArray(vaoCube);
@@ -1344,6 +1367,7 @@ int main()
          glUniformMatrix4fv(matUniformLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
          glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        
          // CUBE ON TOP OF MIDDLE PILLARS
 
          glBindVertexArray(vaoCube);
