@@ -555,36 +555,194 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, const Camera& camera, int
 int main()
 {
     Scene scene;
-    Camera camera;
-    
-    // Step 2
-    /**
-    Camera camera = { glm::vec3(0.0f, 0.0f, 3.0f),  // position
-                      glm::vec3(0.0f, 0.0f, 0.0f),  // look target
+    int maxDepth = 5;
+
+    Camera camera = { glm::vec3(5.0f, 1.0f, 5.0f),  // position
+                      glm::vec3(0.0f, 1.0f, 0.0f),  // look target
                       glm::vec3(0.0f, 1.0f, 0.0f),  // global up
-                      45.0f, 1.0f,                  // fov and focal length
+                      glm::radians(60.0f), 1.0f,                  // fov and focal length
                       640, 480 };                   // image width and height;
-    */
     
-    // Step 3
-    /**
-    Sphere *sphere = new Sphere();
-    sphere->center = glm::vec3(0.0f, 0.0f, 0.0f);
-    sphere->radius = 1.0f;
-    sphere->material.diffuse = glm::vec3(1.0f, 0.0f, 0.0f);
-    scene.objects.push_back(sphere);
-    */
+    Light light = { glm::vec4(0.0f, -1.0f, -1.0f, 0.0f), // position
+                    glm::vec3(0.2f, 0.2f, 0.2f),         // ambient
+                    glm::vec3(1.0f, 1.0f, 1.0f),         // diffuse
+                    glm::vec3(1.0f, 1.0f, 1.0f),         // specular
+                    1, 0, 0 };                           // constant, linear, quadratic
 
-    // Step 10
-    /**
-    Triangle *triangle = new Triangle();
-    triangle->A = glm::vec3(-2, 0, -1);
-    triangle->B = glm::vec3(2, 0, -1);
-    triangle->C = glm::vec3(0, 2, -1);
-    triangle->material.diffuse = glm::vec3(0.0f, 1.0f, 0.0f);
-    scene.objects.push_back(triangle);
-    */
+    scene.lights.push_back(light);
 
+    // FLOOR
+
+    ///**
+    Triangle *floorT1 = new Triangle();
+    floorT1->A = glm::vec3(-10, 0, -10);
+    floorT1->B = glm::vec3(-10, 0, 10);
+    floorT1->C = glm::vec3(10, 0, -10);
+    floorT1->material.ambient = glm::vec3(0.0f, 0.05f, 0.05f);
+    floorT1->material.diffuse = glm::vec3(0.24f, 0.76f, 0.0f);
+    floorT1->material.specular = glm::vec3(0.04f, 0.7f, 0.7f);
+    floorT1->material.shininess = 1;
+    scene.objects.push_back(floorT1);
+
+    Triangle* floorT2 = new Triangle();
+    floorT2->A = glm::vec3(-10, 0, 10);
+    floorT2->B = glm::vec3(10, 0, 10);
+    floorT2->C = glm::vec3(10, 0, -10);
+    floorT2->material.ambient = glm::vec3(0.0f, 0.05f, 0.05f);
+    floorT2->material.diffuse = glm::vec3(0.24f, 0.76f, 0.0f);
+    floorT2->material.specular = glm::vec3(0.04f, 0.7f, 0.7f);
+    floorT2->material.shininess = 1;
+    scene.objects.push_back(floorT2);
+
+    // ROOF 1
+
+    Triangle* roofFront = new Triangle();
+    roofFront->A = glm::vec3(-3, 1, 1);
+    roofFront->B = glm::vec3(-2, 1, 1);
+    roofFront->C = glm::vec3(-2.5, 1.5, 0.5);
+    roofFront->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roofFront->material.diffuse = glm::vec3(0.9, 0.22, 0.27);
+    roofFront->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roofFront->material.shininess = 0.5;
+    scene.objects.push_back(roofFront);
+
+    Triangle* roofLeft = new Triangle();
+    roofLeft->A = glm::vec3(-3, 1, 0);
+    roofLeft->B = glm::vec3(-3, 1, 1);
+    roofLeft->C = glm::vec3(-2.5, 1.5, 0.5);
+    roofLeft->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roofLeft->material.diffuse = glm::vec3(0.9, 0.22, 0.27);
+    roofLeft->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roofLeft->material.shininess = 0.5;
+    scene.objects.push_back(roofLeft);
+
+    Triangle* roofRight = new Triangle();
+    roofRight->A = glm::vec3(-2, 1, 1);
+    roofRight->B = glm::vec3(-2, 1, 0);
+    roofRight->C = glm::vec3(-2.5, 1.5, 0.5);
+    roofRight->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roofRight->material.diffuse = glm::vec3(0.9, 0.22, 0.27);
+    roofRight->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roofRight->material.shininess = 0.5;
+    scene.objects.push_back(roofRight);
+
+    Triangle* roofBack = new Triangle();
+    roofBack->A = glm::vec3(-2, 1, 0);
+    roofBack->B = glm::vec3(-3, 1, 0);
+    roofBack->C = glm::vec3(-2.5, 1.5, 0.5);
+    roofBack->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roofBack->material.diffuse = glm::vec3(0.9, 0.22, 0.27);
+    roofBack->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roofBack->material.shininess = 0.5;
+    scene.objects.push_back(roofBack);
+
+    // HOUSE 1 (CUBE)
+
+    Triangle* frontT1 = new Triangle();
+    frontT1->A = glm::vec3(-3, 0, 1);
+    frontT1->B = glm::vec3(-2, 0, 1);
+    frontT1->C = glm::vec3(-2, 1, 1);
+    frontT1->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    frontT1->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    frontT1->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    frontT1->material.shininess = 0.5;
+    scene.objects.push_back(frontT1);
+
+    Triangle* frontT2 = new Triangle();
+    frontT2->A = glm::vec3(-2, 1, 1);
+    frontT2->B = glm::vec3(-3, 1, 1);
+    frontT2->C = glm::vec3(-3, 0, 1);
+    frontT2->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    frontT2->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    frontT2->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    frontT2->material.shininess = 0.5;
+    scene.objects.push_back(frontT2);
+
+    Triangle* backT1 = new Triangle();
+    backT1->A = glm::vec3(-2, 0, 0);
+    backT1->B = glm::vec3(-3, 0, 0);
+    backT1->C = glm::vec3(-3, 1, 0);
+    backT1->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    backT1->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    backT1->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    backT1->material.shininess = 0.5;
+    scene.objects.push_back(backT1);
+
+    Triangle* backT2 = new Triangle();
+    backT2->A = glm::vec3(-3, 1, 0);
+    backT2->B = glm::vec3(-2, 1, 0);
+    backT2->C = glm::vec3(-2, 0, 0);
+    backT2->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    backT2->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    backT2->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    backT2->material.shininess = 0.5;
+    scene.objects.push_back(backT2);
+
+    Triangle* leftT1 = new Triangle();
+    leftT1->A = glm::vec3(-3, 0, 0);
+    leftT1->B = glm::vec3(-3, 0, 1);
+    leftT1->C = glm::vec3(-3, 1, 1);
+    leftT1->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    leftT1->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    leftT1->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    leftT1->material.shininess = 0.5;
+    scene.objects.push_back(leftT1);
+
+    Triangle* leftT2 = new Triangle();
+    leftT2->A = glm::vec3(-3, 1, 1);
+    leftT2->B = glm::vec3(-3, 1, 0);
+    leftT2->C = glm::vec3(-3, 0, 0);
+    leftT2->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    leftT2->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    leftT2->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    leftT2->material.shininess = 0.5;
+    scene.objects.push_back(leftT2);
+
+    Triangle* rightT1 = new Triangle();
+    rightT1->A = glm::vec3(-2, 0, 1);
+    rightT1->B = glm::vec3(-2, 0, 0);
+    rightT1->C = glm::vec3(-2, 1, 0);
+    rightT1->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    rightT1->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    rightT1->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    rightT1->material.shininess = 0.5;
+    scene.objects.push_back(rightT1);
+
+    Triangle* rightT2 = new Triangle();
+    rightT2->A = glm::vec3(-2, 1, 0);
+    rightT2->B = glm::vec3(-2, 1, 1);
+    rightT2->C = glm::vec3(-2, 0, 1);
+    rightT2->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    rightT2->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    rightT2->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    rightT2->material.shininess = 0.5;
+    scene.objects.push_back(rightT2);
+
+    // ROOF 2
+
+    Triangle* roof2Front = new Triangle();
+    roof2Front->A = glm::vec3(2, 1, 1);
+    roof2Front->B = glm::vec3(3, 1, 1);
+    roof2Front->C = glm::vec3(2.5, 1.5, 0.5);
+    roof2Front->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roof2Front->material.diffuse = glm::vec3(1.0f, 0.8, 0.27);
+    roof2Front->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roof2Front->material.shininess = 0.5;
+    scene.objects.push_back(roof2Front);
+
+    Triangle* roof2Left = new Triangle();
+    roof2Left->A = glm::vec3(3, 1, 1);
+    roof2Left->B = glm::vec3(3, 1, 0);
+    roof2Left->C = glm::vec3(2.5, 1.5, 0.5);
+    roof2Left->material.ambient = glm::vec3(0.2125f, 0.1275f, 0.054f);
+    roof2Left->material.diffuse = glm::vec3(1.0f, 0.8, 0.27);
+    roof2Left->material.specular = glm::vec3(0.393548f, 0.271906f, 0.166721f);
+    roof2Left->material.shininess = 0.5;
+    scene.objects.push_back(roof2Left);
+
+
+    //*/
+    /**
     // Step 11
     string filename;
     float imageWidth, imageHeight;
@@ -702,7 +860,7 @@ int main()
     }
     readFile.close();
     cout << "End of File Reached" << endl;
-    //*/
+    */
 
     Image image(camera.imageWidth, camera.imageHeight);
     for (int y = 0; y < image.height; ++y)
