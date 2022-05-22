@@ -407,7 +407,7 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, const Camera& camera, int
     
     Scene currentScene = scene;
     
-    glm::vec3 color(0.0f);
+    glm::vec3 color = glm::vec3(0.33f, 0.6f, 0.75f);
   
     glm::vec3 finalAmbient = glm::vec3(0.0);
     glm::vec3 finalDiffuse = glm::vec3(0.0);
@@ -585,7 +585,6 @@ int main()
     scene.objects.push_back(triangle);
     */
 
-    
     // Step 11
     string filename;
     float imageWidth, imageHeight;
