@@ -573,7 +573,6 @@ int main()
 
     // FLOOR
 
-    ///**
     Triangle *floorT1 = new Triangle();
     floorT1->A = glm::vec3(-10, 0, -10);
     floorT1->B = glm::vec3(-10, 0, 10);
@@ -842,6 +841,28 @@ int main()
     left2T2->material.shininess = 0.5;
     scene.objects.push_back(left2T2);
 
+    // RIVER
+
+    Triangle* riverT1 = new Triangle();
+    riverT1->A = glm::vec3(-10, 0.1, 2);
+    riverT1->B = glm::vec3(-10, 0.1, 4);
+    riverT1->C = glm::vec3(10, 0.1, 2);
+    riverT1->material.ambient = glm::vec3(0.0f, 0.05f, 0.05f);
+    riverT1->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    riverT1->material.specular = glm::vec3(0.04f, 0.7f, 0.7f);
+    riverT1->material.shininess = 60;
+    scene.objects.push_back(riverT1);
+    
+    Triangle* riverT2 = new Triangle();
+    riverT2->A = glm::vec3(10, 0.1, 4);
+    riverT2->B = glm::vec3(10, 0.1, 2);
+    riverT2->C = glm::vec3(-10, 0.1, 4);
+    riverT2->material.ambient = glm::vec3(0.0f, 0.05f, 0.05f);
+    riverT2->material.diffuse = glm::vec3(0.04, 0.2, 0.41);
+    riverT2->material.specular = glm::vec3(0.04f, 0.7f, 0.7f);
+    riverT2->material.shininess = 60;
+    scene.objects.push_back(riverT2);
+    
 
     //*/
     /**
