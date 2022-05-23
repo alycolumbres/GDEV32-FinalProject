@@ -863,6 +863,26 @@ int main()
     riverT2->material.shininess = 60;
     scene.objects.push_back(riverT2);
     
+    // MODERN ART (SPHERES)
+    
+    Sphere *baseSphere = new Sphere();
+    baseSphere->center = glm::vec3(0.0f, 0.5f, 0.0f);
+    baseSphere->radius = 0.5f;
+    baseSphere->material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+    scene.objects.push_back(baseSphere);
+    
+    Sphere *middleSphere = new Sphere();
+    middleSphere->center = glm::vec3(0.0f, 1.2f, 0.0f);
+    middleSphere->radius = 0.3f;
+    middleSphere->material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+    scene.objects.push_back(middleSphere);
+    
+    Sphere *topSphere = new Sphere();
+    topSphere->center = glm::vec3(0.0f, 1.68f, 0.0f);
+    topSphere->radius = 0.2f;
+    topSphere->material.diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+    scene.objects.push_back(topSphere);
+    
 
     //*/
     /**
@@ -1000,9 +1020,9 @@ int main()
     std::cout << std::endl;
     
     // For Windows
-    std::string imageFileName = "scene.png"; // You might need to make this a full path if you are on Mac
+    //std::string imageFileName = "scene.png"; // You might need to make this a full path if you are on Mac
     // For Mac
-    //std::string imageFileName = "/Users/alycolumbres/Desktop/admu/Y4 S2/GDEV 32/OpenGL/Projects/ProgEx 4 - Ray Tracing/scene.png";
+    std::string imageFileName = "/Users/alycolumbres/Desktop/admu/Y4 S2/GDEV 32/OpenGL/Projects/Final Project - Ray tracing/scene.png";
     stbi_write_png(imageFileName.c_str(), image.width, image.height, 3, image.data.data(), 0);
     
     for (size_t i = 0; i < scene.objects.size(); ++i)
