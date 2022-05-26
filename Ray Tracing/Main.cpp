@@ -387,6 +387,12 @@ IntersectionInfo Raycast(const Ray& ray, const Scene &scene)
     return intersections[index];
 }
 
+// RNG; for blury reflections
+double random(double interval)
+{
+    int r = rand();
+    return double(r) / RAND_MAX * interval - interval;
+}
 
 /**
  * @brief Perform a ray-trace to the scene
@@ -413,6 +419,10 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, const Camera& camera, int
     glm::vec3 finalDiffuse = glm::vec3(0.0);
     glm::vec3 finalSpecular = glm::vec3(0.0);
     glm::vec3 finalColor(0.0f, 0.0f, 0.0f);
+    
+    // For blurry reflections
+    double px, py, pz;
+    glm::vec3 newRays;
     
     // Step 7
     
@@ -509,7 +519,17 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, const Camera& camera, int
                     {
                         Ray reflectionRay;
                         reflectionRay.origin = ret.intersectionPoint + 0.001f * ret.intersectionNormal;
-                        reflectionRay.direction = glm::reflect(ret.incomingRay.direction, ret.intersectionNormal);
+                        //reflectionRay.direction = glm::reflect(ret.incomingRay.direction, ret.intersectionNormal);
+                        
+                        // Async task: Blurry reflections
+                        // Referred to this source for help: https://www.cs.unc.edu/~adyilie/comp238/PA2/PA2.htm
+                        px = random(0.05);
+                        py = random(0.05);
+                        pz = random(0.05);
+                        newRays = glm::vec3(px, py, pz);
+                        
+                        reflectionRay.direction = glm::normalize(glm::reflect(ret.incomingRay.direction, ret.intersectionNormal) + newRays);
+                        
                         float Kr = ret.obj->material.shininess / 128.0f;
                         finalColor += Kr * RayTrace(reflectionRay, currentScene, camera, maxDepth - 1);
                     }
